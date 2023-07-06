@@ -52,7 +52,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red (8)
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
@@ -131,7 +131,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red (7)
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
@@ -210,7 +210,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red (1)
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
@@ -289,7 +289,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red (5)
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
@@ -368,7 +368,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red (9)
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
@@ -447,7 +447,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red (3)
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
@@ -526,7 +526,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red (6)
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
@@ -605,7 +605,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
@@ -684,7 +684,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red (4)
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
@@ -763,7 +763,7 @@ PrefabInstance:
     - target: {fileID: 5113280464052646743, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}
       propertyPath: m_Name
-      value: BeerCup_red (2)
+      value: BeerCup
       objectReference: {fileID: 0}
     - target: {fileID: 7808262260806704530, guid: fc502727c73eefe4dacded0bfed1203b,
         type: 3}

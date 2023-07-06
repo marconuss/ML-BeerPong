@@ -21,8 +21,16 @@ public class BeerCup : MonoBehaviour
         }
     }
     
+    // the initial position of the beer cup
+    private Vector3 _initialPosition;
+
+    
+    /// <summary>
+    /// Reset the beer cup to its initial position
+    /// </summary>
     public void ResetBeerCup()
     {
+        transform.position = _initialPosition;
         beerCollider.gameObject.SetActive(true);
     }
 
@@ -31,6 +39,7 @@ public class BeerCup : MonoBehaviour
     /// </summary>
     private void Awake()
     {
+        _initialPosition = transform.position;
         beerCollider = transform.Find("BeerCollider").GetComponent<Collider>();
     }
 }
