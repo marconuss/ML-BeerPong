@@ -38,7 +38,7 @@ public class BeerCups : MonoBehaviour
     
     private void FindChildBeerCups()
     {
-        for (int i = transform.childCount; i >= 0; i--)
+        for (int i = 0; i <transform.childCount; i++)
         {
             Transform child = transform.GetChild(i);
             if (child.CompareTag("beerCup"))
@@ -52,5 +52,10 @@ public class BeerCups : MonoBehaviour
                 Debug.LogWarning($"No beer cup component found for child {child.name}");
             }
         }
+    }
+
+    public BeerCup GetBeerCup(Collider other)
+    {
+        return other.GetComponentInParent<BeerCup>();
     }
 }

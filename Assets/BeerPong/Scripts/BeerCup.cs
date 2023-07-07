@@ -10,6 +10,8 @@ public class BeerCup : MonoBehaviour
     /// </summary>
     [HideInInspector] public Collider beerCollider;
     
+    public bool IsHit { get; private set; }
+    
     /// <summary>
     /// The position of the beer cup
     /// </summary>
@@ -31,7 +33,8 @@ public class BeerCup : MonoBehaviour
     public void ResetBeerCup()
     {
         transform.position = _initialPosition;
-        beerCollider.gameObject.SetActive(true);
+        IsHit = false;
+        gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -41,5 +44,12 @@ public class BeerCup : MonoBehaviour
     {
         _initialPosition = transform.position;
         beerCollider = transform.Find("BeerCollider").GetComponent<Collider>();
+    }
+
+    public void GotHit()
+    {
+        Debug.Log("Got hit");
+        IsHit = true;
+        gameObject.SetActive(false);
     }
 }

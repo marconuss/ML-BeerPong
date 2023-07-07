@@ -115,7 +115,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 917409101224740312}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d277750b32714ca49b81faf8eea0c389, type: 3}
   m_Name: 
@@ -125,7 +125,8 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
   trainingMode: 0
-  initialPosition: {x: 2, y: 1.8, z: 0.1}
+  initialPosition: {x: 1.5, y: 1.6, z: 0.1}
+  _beerCups: {fileID: 0}
 --- !u!114 &6865250043537298164
 MonoBehaviour:
   m_ObjectHideFlags: 0

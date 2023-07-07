@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - beerCup
+  - beer
   layers:
   - Default
   - TransparentFX
