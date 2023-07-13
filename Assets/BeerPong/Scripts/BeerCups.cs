@@ -12,7 +12,7 @@ public class BeerCups : MonoBehaviour
     /// <summary>
     /// The list of the opponents beer cups
     /// </summary>
-    public List<BeerCup> BeerCupsList { get; private set;}
+    public List<BeerCup> BeerCupsList { get; private set; }
 
     /// <summary>
     /// Reset all the beer cups
@@ -24,7 +24,7 @@ public class BeerCups : MonoBehaviour
             beerCup.ResetBeerCup();
         }
     }
-    
+
     private void Awake()
     {
         // initialize beer cups list
@@ -33,12 +33,12 @@ public class BeerCups : MonoBehaviour
 
     private void Start()
     {
-       FindChildBeerCups(); 
+        FindChildBeerCups();
     }
-    
+
     private void FindChildBeerCups()
     {
-        for (int i = 0; i <transform.childCount; i++)
+        for (int i = 0; i < transform.childCount; i++)
         {
             Transform child = transform.GetChild(i);
             if (child.CompareTag("beerCup"))
@@ -57,5 +57,13 @@ public class BeerCups : MonoBehaviour
     public BeerCup GetBeerCup(Collider other)
     {
         return other.GetComponentInParent<BeerCup>();
+    }
+
+    public void ResetCups()
+    {
+        foreach (var beerCup in BeerCupsList)
+        {
+            beerCup.ResetBeerCup();
+        }
     }
 }
