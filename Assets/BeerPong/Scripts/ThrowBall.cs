@@ -59,7 +59,6 @@ public class ThrowBall : MonoBehaviour
         if (!_isBallThrown)
         {
             Quaternion rotation = Quaternion.Euler(_pitch, _yaw, 0);
-            Vector3 throwDirection = rotation * transform.forward;
             transform.rotation = rotation;
 
             DrawTrajectory.Instance.Draw(transform.forward, _throwForce, _rigidbody, initialPosition);

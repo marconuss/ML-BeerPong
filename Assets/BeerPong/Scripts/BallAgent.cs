@@ -46,7 +46,6 @@ public class BallAgent : Agent
     /// </summary>
     public override void Initialize()
     {
-
         _rigidbody = GetComponent<Rigidbody>();
         
         //deactivate the rigidbody so it doesn't fall over
