@@ -33,6 +33,7 @@ public class BeerCup : MonoBehaviour
     public void ResetBeerCup()
     {
         transform.position = _initialPosition;
+        transform.rotation = Quaternion.identity;
         IsHit = false;
         gameObject.SetActive(true);
     }

@@ -13,15 +13,13 @@ using UnityEngine.Serialization;
 
 public class BallAgent : Agent
 {
-    /// <summary>
-    /// Is it the agent's turn to throw the ball
-    /// </summary>
-    [HideInInspector]
-    public bool agentTurn = false;
+    public float ballPitch;
+    public float ballYaw;
+    public float launchForce;
     
-    //  ---------------------------------------
-    //  Serialized Fields
-    //  ---------------------------------------
+    [FormerlySerializedAs("agentTurn")] [HideInInspector]
+    public bool isAgentTurn = false;
+    
     [Tooltip("Whether it is gameplay mode or training mode")] [SerializeField]
     private bool trainingMode;
 
@@ -30,46 +28,25 @@ public class BallAgent : Agent
     
     [Tooltip("Target beer cup")] [SerializeField]
     private BeerCups beerCups;
-
-    //  ---------------------------------------
-    // Private Variables
-    //  ---------------------------------------
-
+    
     // Rigidbody of the ball
     private Rigidbody _rigidbody;
 
     // current beerCup the agent is aiming at
     private BeerCup _aimedBeerCup;
     
-    public float _ballPitch;
-    public float _ballYaw;
-    public float _launchForce;
+    private const float MaxBallPitch = 45f;
+    private const float MaxBallYaw = 45f;
+    private const float MaxLaunchForce = 100f;
     
-    private const float _maxBallPitch = 45f;
-    private const float _maxBallYaw = 45f;
-    private const float _maxLaunchForce = 100f;
     
-    // the nearest beer cup to the agent
-    //private BeerCup _nearestBeerCup;
-
-    //  ---------------------------------------
-    //  Functions
-    //  ---------------------------------------
-
-    /// <summary>
-    /// Number of beer cups hit
-    /// </summary>
-    public int BeerCupsHit { get; private set; }
-
-    // ---------------------------------------
-    // ML Agents Functions (Override)
-    // ---------------------------------------
 
     /// <summary>
     /// Initialize the agent
     /// </summary>
     public override void Initialize()
     {
+
         _rigidbody = GetComponent<Rigidbody>();
         
         //deactivate the rigidbody so it doesn't fall over
@@ -87,13 +64,12 @@ public class BallAgent : Agent
     /// </summary>
     public override void OnEpisodeBegin()
     {
-        BeerCupsHit = 0;
         StartTurn();
         if (trainingMode)
         {
             beerCups.ResetCups();
         }
-        agentTurn = true;
+        isAgentTurn = true;
     }
 
     /// <summary>
@@ -114,13 +90,13 @@ public class BallAgent : Agent
         //sensor.AddObservation(toBeerCup.normalized);
 
         // Observe the agent's pitch (1 observation)
-        sensor.AddObservation(_ballPitch / _maxBallPitch);
+        sensor.AddObservation(ballPitch / MaxBallPitch);
         
         // Observe the agent' yaw (1 observation)
-        sensor.AddObservation(_ballYaw / _maxBallYaw);
+        sensor.AddObservation(ballYaw / MaxBallYaw);
         
         // Observe the agent's force (1 observation)
-        sensor.AddObservation(_launchForce / _launchForce);
+        sensor.AddObservation(launchForce / MaxLaunchForce);
 
         // Observe the agent's distance to the beer cup (1 observation)
         sensor.AddObservation(Vector3.Distance(this.transform.localPosition, _aimedBeerCup.CupPosition));
@@ -141,30 +117,21 @@ public class BallAgent : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        if(!agentTurn) return;
+        if(!isAgentTurn) return;
 
         var continuousActions = actions.ContinuousActions;
-
-        _ballPitch = continuousActions[0];
-        _ballYaw = continuousActions[1];
-        _launchForce = continuousActions[2];
         
+        float pitchChange = Mathf.Clamp(continuousActions[0], -1f, 1f);
+        float yawChange = Mathf.Clamp(continuousActions[1], -1f, 1f);
+        float forceChange = Mathf.Clamp(continuousActions[2], -1f, 1f);
 
-        Vector3 lanchDirection = new Vector3(continuousActions[0], continuousActions[1], 0);
-        
-        // launch the ball
-        //_rigidbody.WakeUp();
-        //if (!_rigidbody.isKinematic)
-        //{
-        //    _rigidbody.AddForce(lanchDirection * _launchForce * 100f);
-        //}
-
-        _ballPitch = Mathf.Clamp(_ballPitch, -_maxBallPitch, _maxBallPitch);
-        _ballYaw = Mathf.Clamp(_ballYaw, -_maxBallYaw, _maxBallYaw);
-        _launchForce = Mathf.Clamp(_launchForce, 0f, _maxLaunchForce);
+        ballPitch += pitchChange * MaxBallPitch;
+        ballYaw += yawChange * MaxBallYaw;
+        launchForce += forceChange * MaxLaunchForce;
         
         // apply the rotation
-        transform.rotation = Quaternion.Euler(_ballPitch, _ballYaw, 0f);
+        transform.rotation = Quaternion.Euler(ballPitch, ballYaw, 0f);
+        _rigidbody.AddForce(transform.forward * launchForce * 100f, ForceMode.Impulse);
         
         EndTurn();
 
@@ -179,45 +146,24 @@ public class BallAgent : Agent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var continuousActionsOut = actionsOut.ContinuousActions;
-
-        // Get the user input
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            _ballPitch = 1f;
-        }
-        else if (Input.GetKey(KeyCode.DownArrow))
-        {
-            _ballPitch = -1f;
-        }
-
-        // Turn left/right
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            _ballYaw = -1f;
-        }
-        else if (Input.GetKey(KeyCode.RightArrow))
-        {
-            _ballYaw = 1f;
-        }
         
-        // Throw the ball
-        if (Input.GetKey(KeyCode.Space))
-        {
-            Debug.Log("Heuristic staff");
-            _launchForce = 1f;
-            _rigidbody.isKinematic = false;
-            RequestDecision();
-            continuousActionsOut[0] = _ballPitch;
-            continuousActionsOut[1] = _ballYaw;
-            continuousActionsOut[2] = _launchForce;
-        }
-        else
+
+        // pitch
+        continuousActionsOut[0] = Input.GetAxis("Vertical");
+        // yaw
+        continuousActionsOut[1] = Input.GetAxis("Horizontal");
+        // force
+        continuousActionsOut[2] = Input.GetAxis("Mouse ScrollWheel");
+        
+        if(Input.GetButtonDown("Jump"))
         {
             
-            continuousActionsOut[0] = 0f;
-            continuousActionsOut[1] = 0f;
+        }
+        else  
+        {
             continuousActionsOut[2] = 0f;
         }
+        
     }
 
     /// <summary>
@@ -236,9 +182,9 @@ public class BallAgent : Agent
     /// </summary>
     private void EndTurn()
     {
-        if (agentTurn)
+        if (isAgentTurn)
         {
-            agentTurn = false;
+            isAgentTurn = false;
         }
         StartTurn();
     }
