@@ -19,10 +19,8 @@ public class BeerCups : MonoBehaviour
     /// </summary>
     public void ResetAllBeerCups()
     {
-        foreach (var beerCup in BeerCupsList)
-        {
-            beerCup.ResetBeerCup();
-        }
+        BeerCupsList.Clear();
+        FindChildBeerCups();
     }
 
     private void Awake()
@@ -57,6 +55,11 @@ public class BeerCups : MonoBehaviour
     public BeerCup GetBeerCup(Collider other)
     {
         return other.GetComponentInParent<BeerCup>();
+    }
+    
+    public void RemoveCup(BeerCup beerCup)
+    {
+        BeerCupsList.Remove(beerCup);
     }
 
     public void ResetCups()

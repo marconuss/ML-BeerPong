@@ -8,14 +8,13 @@ using UnityEngine;
 
 public class AgentThrowBall : Agent
 {
-
     [Tooltip("Whether it is gameplay mode or training mode")]
     public bool trainingMode;
 
     [Tooltip("Target beer cups")] [SerializeField]
     private BeerCups beerCups;
 
-    [Tooltip("The training Room Position")] [SerializeField] 
+    [Tooltip("The training Room Position")] [SerializeField]
     private Transform trainingRoom;
 
     [SerializeField] private float timeBetweenDecisionsAtInference;
@@ -54,20 +53,27 @@ public class AgentThrowBall : Agent
     // maximum distance between the ball and the beer cup, used for normalizing the distance
     private const float MaxCupDistance = 5.0f;
 
-    private int collisionCounter;
+    private int _collisionCounter;
+    private int _throwAttempts;
+    
+    // the trajectory drawer
+    private DrawTrajectory _drawTrajectory;
 
     public override void Initialize()
     {
         initialPosition += trainingRoom.position;
-        
+
         //deactivate the rigidbody so it doesn't fall at start
         _ballRigidbody = GetComponent<Rigidbody>();
         _ballRigidbody.isKinematic = true;
         _pitch = 0f;
         _yaw = 0f;
         _throwForce = BaseThrowForce;
+        
+        // get the trajectory drawer
+        _drawTrajectory = GetComponent<DrawTrajectory>();
 
-        collisionCounter = 0;
+        _collisionCounter = 0;
         // If not in training mode, play forever, no max step
         if (!trainingMode)
         {
@@ -75,20 +81,24 @@ public class AgentThrowBall : Agent
         }
         else
         {
-            DrawTrajectory.Instance.IsVisible = false;
+            _drawTrajectory.IsVisible = false;
         }
     }
 
 
     public override void OnEpisodeBegin()
     {
-        if (trainingMode)
-        {
-            _pitch = 0f;
-            _yaw = 0f;
-            _throwForce = BaseThrowForce;
-        }
+        // reset throw variables
+        _pitch = 0f;
+        _yaw = 0f;
+        _throwForce = BaseThrowForce;
+        // reset attempts
+        _throwAttempts = 0;
 
+        // reset all beer cups
+        beerCups.ResetAllBeerCups();
+
+        // reset the ball
         ResetBall();
         UpdateAimedBeerCup();
     }
@@ -141,7 +151,7 @@ public class AgentThrowBall : Agent
         ThrowBall();
     }
 
-    
+
     /// <summary>
     /// because the manual control is done with UI buttons,
     /// the Heuristic method just updates the actions with the current values
@@ -162,21 +172,22 @@ public class AgentThrowBall : Agent
         _ballRigidbody.isKinematic = false;
         if (!trainingMode)
         {
-            DrawTrajectory.Instance.IsVisible = false;
+            _drawTrajectory.IsVisible = false;
         }
+
         _ballRigidbody.AddForce(_throwForce * transform.forward);
     }
 
     private void ResetBall()
     {
         // reset throw variables
-        collisionCounter = 0;
+        _collisionCounter = 0;
         _isBallThrown = false;
         if (!trainingMode)
         {
-            DrawTrajectory.Instance.IsVisible = true;
+            _drawTrajectory.IsVisible = true;
         }
-        
+
         //reset the beer cup
         beerCups.ResetCups();
 
@@ -206,26 +217,28 @@ public class AgentThrowBall : Agent
 
     private void OnCollisionEnter(Collision other)
     {
-
         // reset the ball if it hits the boundary or the ground
         if (other.gameObject.CompareTag("boundary"))
         {
-            Debug.Log("Hit the boundary!");
+            //Debug.Log("Hit the boundary!");
             // increase the collision counter, if it is greater than 1, reset the ball
             // this allows the ball to bounce once before resetting
-            collisionCounter++;
-            if (collisionCounter > 1)
+            _collisionCounter++;
+            if (_collisionCounter > 1)
             {
+                _throwAttempts++;
                 ResetBall();
-                AddReward(-0.1f);
+                // if the ball hits the boundary, give a small negative reward
+                // the more attempts you take, the more negative reward you get
+                AddReward(-0.1f * (_throwAttempts * 0.1f));
             }
         }
 
         // if the ball hits the beer cup, give a small reward, you deserve it 
         if (other.gameObject.CompareTag("beerCup"))
         {
-            Debug.Log("Hit the beer cup!");
-            AddReward(+0.1f);
+            //Debug.Log("Hit the beer cup!");
+            AddReward(+0.001f);
         }
     }
 
@@ -234,19 +247,41 @@ public class AgentThrowBall : Agent
         // if the ball hits the beer cup, give a large reward and reset the ball
         if (other.gameObject.CompareTag("beer"))
         {
-            _aimedBeerCup.GotHit();
+            BeerCup beerCup = other.transform.GetComponentInParent<BeerCup>();
+
+            // in training mode allow only the aimed beer cup to be hit
+            if (trainingMode)
+            {
+                if (_aimedBeerCup != beerCup)
+                {
+                    ResetBall();
+                    return;
+                }
+            }
+
+            beerCup.GotHit();
+
+            //_aimedBeerCup.GotHit();
+            beerCups.RemoveCup(beerCup);
+            AddReward(0.8f);
             // if the collision counter is 1, give a bigger reward
-            if (collisionCounter == 1)
+            if (_collisionCounter == 1)
             {
                 Debug.Log("Hit the cup with bounce!");
-                AddReward(1f);
+                AddReward(0.2f);
+            }
+
+            if (beerCups.BeerCupsList.Count > 0)
+            {
+                UpdateAimedBeerCup();
+                ResetBall();
             }
             else
             {
-                AddReward(0.8f);
+                Debug.Log("All cups hit!");
+                AddReward(1f);
+                EndEpisode();
             }
-            //EndEpisode();
-            ResetBall();
         }
     }
 
@@ -261,11 +296,10 @@ public class AgentThrowBall : Agent
             if (!trainingMode)
             {
                 // Draw trajectory line
-                DrawTrajectory.Instance.Draw(transform.forward, _throwForce, _ballRigidbody, initialPosition);
+                _drawTrajectory.Draw(transform.forward, _throwForce, _ballRigidbody, initialPosition);
             }
-                
         }
-        
+
         // manual reset if something goes wrong
         if (Input.GetButtonDown("Debug Reset"))
         {
