@@ -43,13 +43,15 @@ public class DrawTrajectory : MonoBehaviour
     private void Start()
     {
         _linePointsCount = lineSegmentCount * showPercentage / 100;
-        lineRenderer.positionCount = lineSegmentCount;
+        lineRenderer.positionCount = 0;
     }
     
     public void Draw(Vector3 throwDirection, float throwForce, Rigidbody rb, Vector3 initialPosition)
     {
-        if(!IsVisible)
+        if (!IsVisible)
+        {
             return;
+        }
         
         _linePointsCount = lineSegmentCount * showPercentage / 100;
         Vector3 forceVector = throwDirection * throwForce;

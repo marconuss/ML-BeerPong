@@ -8,11 +8,15 @@ using UnityEngine;
 
 public class AgentThrowBall : Agent
 {
+
     [Tooltip("Whether it is gameplay mode or training mode")]
     public bool trainingMode;
 
     [Tooltip("Target beer cups")] [SerializeField]
     private BeerCups beerCups;
+
+    [Tooltip("The training Room Position")] [SerializeField] 
+    private Transform trainingRoom;
 
     [SerializeField] private float timeBetweenDecisionsAtInference;
 
@@ -48,12 +52,14 @@ public class AgentThrowBall : Agent
     private float _throwForce;
 
     // maximum distance between the ball and the beer cup, used for normalizing the distance
-    private const float MaxCupDistance = 3.0f;
+    private const float MaxCupDistance = 5.0f;
 
     private int collisionCounter;
 
     public override void Initialize()
     {
+        initialPosition += trainingRoom.position;
+        
         //deactivate the rigidbody so it doesn't fall at start
         _ballRigidbody = GetComponent<Rigidbody>();
         _ballRigidbody.isKinematic = true;
@@ -66,6 +72,10 @@ public class AgentThrowBall : Agent
         if (!trainingMode)
         {
             MaxStep = 0;
+        }
+        else
+        {
+            DrawTrajectory.Instance.IsVisible = false;
         }
     }
 
@@ -150,7 +160,10 @@ public class AgentThrowBall : Agent
     {
         _isBallThrown = true;
         _ballRigidbody.isKinematic = false;
-        DrawTrajectory.Instance.IsVisible = false;
+        if (!trainingMode)
+        {
+            DrawTrajectory.Instance.IsVisible = false;
+        }
         _ballRigidbody.AddForce(_throwForce * transform.forward);
     }
 
@@ -159,7 +172,13 @@ public class AgentThrowBall : Agent
         // reset throw variables
         collisionCounter = 0;
         _isBallThrown = false;
-        DrawTrajectory.Instance.IsVisible = true;
+        if (!trainingMode)
+        {
+            DrawTrajectory.Instance.IsVisible = true;
+        }
+        
+        //reset the beer cup
+        beerCups.ResetCups();
 
         // reset rigidbody
         _ballRigidbody.velocity = Vector3.zero;
@@ -226,6 +245,7 @@ public class AgentThrowBall : Agent
             {
                 AddReward(0.8f);
             }
+            //EndEpisode();
             ResetBall();
         }
     }
@@ -237,9 +257,13 @@ public class AgentThrowBall : Agent
             // update ball rotation
             Quaternion rotation = Quaternion.Euler(_pitch, _yaw, 0);
             transform.rotation = rotation;
-            
-            // Draw trajectory line
-            DrawTrajectory.Instance.Draw(transform.forward, _throwForce, _ballRigidbody, initialPosition);
+
+            if (!trainingMode)
+            {
+                // Draw trajectory line
+                DrawTrajectory.Instance.Draw(transform.forward, _throwForce, _ballRigidbody, initialPosition);
+            }
+                
         }
         
         // manual reset if something goes wrong
@@ -248,17 +272,11 @@ public class AgentThrowBall : Agent
             ResetBall();
             beerCups.ResetCups();
         }
-
-        if (Input.GetButtonDown("Jump"))
-        {
-            if (!trainingMode)
-            {
-                RequestDecision();
-            }
-        }
     }
 
-
+    /// <summary>
+    /// Wait before throwing the ball, this is to allow the agent to make a decision
+    /// </summary>
     private void WaitBeforeThrowing()
     {
         if (_isBallThrown)
@@ -270,9 +288,6 @@ public class AgentThrowBall : Agent
         {
             _timeSinceDecision = 0f;
             RequestDecision();
-            //Quaternion rotation = Quaternion.Euler(_pitch, _yaw, 0);
-            //transform.rotation = rotation;
-            //ThrowBall();
         }
         else
         {
@@ -287,7 +302,7 @@ public class AgentThrowBall : Agent
             WaitBeforeThrowing();
         }
 
-        //avoids scenario where the nearest flower nectar is taken by another agent and not updated
+        //avoids scenario where there is no beer cup to aim at
         if (!ReferenceEquals(_aimedBeerCup, null))
         {
             UpdateAimedBeerCup();
