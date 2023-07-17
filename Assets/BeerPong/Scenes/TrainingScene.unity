@@ -3019,11 +3019,36 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.015
       objectReference: {fileID: 0}
+    - target: {fileID: 1526660090015068946, guid: c8bc4b9e865403a4298df321728ffe58,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 2976884beaa46874b96a046f2c35661b, type: 2}
+    - target: {fileID: 2884263432147441243, guid: c8bc4b9e865403a4298df321728ffe58,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 2976884beaa46874b96a046f2c35661b, type: 2}
     - target: {fileID: 3195880205628155711, guid: c8bc4b9e865403a4298df321728ffe58,
         type: 3}
       propertyPath: m_Name
       value: BeerCups
       objectReference: {fileID: 0}
+    - target: {fileID: 3912262591610145603, guid: c8bc4b9e865403a4298df321728ffe58,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 2976884beaa46874b96a046f2c35661b, type: 2}
+    - target: {fileID: 4334752204180486489, guid: c8bc4b9e865403a4298df321728ffe58,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 2976884beaa46874b96a046f2c35661b, type: 2}
+    - target: {fileID: 5130980530550720674, guid: c8bc4b9e865403a4298df321728ffe58,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 2976884beaa46874b96a046f2c35661b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3108,6 +3133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineRenderer: {fileID: 1307924241}
   lineSegmentCount: 20
+  showPercentage: 50
 --- !u!114 &9177667188762111614 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5412186665765366737, guid: c8bc4b9e865403a4298df321728ffe58,
