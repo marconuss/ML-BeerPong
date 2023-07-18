@@ -261,8 +261,8 @@ public class AgentThrowBall : Agent
 
             beerCup.GotHit();
 
-            //_aimedBeerCup.GotHit();
             beerCups.RemoveCup(beerCup);
+            // add reward for hitting beer trigger
             AddReward(0.8f);
             // if the collision counter is 1, give a bigger reward
             if (_collisionCounter == 1)
