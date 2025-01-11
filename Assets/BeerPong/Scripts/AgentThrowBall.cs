@@ -192,7 +192,7 @@ public class AgentThrowBall : Agent
         beerCups.ResetCups();
 
         // reset rigidbody
-        _ballRigidbody.velocity = Vector3.zero;
+        _ballRigidbody.linearVelocity = Vector3.zero;
         _ballRigidbody.angularVelocity = Vector3.zero;
         _ballRigidbody.isKinematic = true;
 
