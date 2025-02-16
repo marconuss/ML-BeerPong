@@ -3,7 +3,6 @@ using System.Threading.Tasks.Sources;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class AgentThrowBall : Agent
